@@ -1,23 +1,34 @@
 NAME = minitalk
+SERVER = server
 
 FILES = \
 	minitalk
 
+SERVER_FILES = \
+	server char_bld
+
 OFILES = $(FILES:%=%.o)
+SERVER_OFILES = $(SERVER_FILES:%=%.o)
 CFLAGS = -Wall -Wextra
-OPTIM = -O3
+OPTIM = -O0
 export OPTIM
 INC = -I.
 LIBS= -lft
 LIBS_FILES = libft/libft.a
 LIBS_DIRS = $(addprefix -L, $(dir $(LIBS_FILES)))
 
-all: $(NAME)
+all: $(NAME) $(SERVER)
 
 $(NAME): $(OFILES) $(LIBS_FILES)
 	gcc $(LIBS_DIRS) $(OFILES) $(LIBS) -o $@
 
+$(SERVER): $(SERVER_OFILES) $(LIBS_FILES)
+	gcc $(LIBS_DIRS) $(SERVER_OFILES) $(LIBS) -o $@
+
 $(OFILES): %.o: %.c
+	gcc $(CFLAGS) $(OPTIM) $(INC) -c $< -o $@
+
+$(SERVER_OFILES): %.o: %.c
 	gcc $(CFLAGS) $(OPTIM) $(INC) -c $< -o $@
 
 $(LIBS_FILES): FORCE
@@ -26,12 +37,12 @@ $(LIBS_FILES): FORCE
 FORCE: ;
 
 clean_:
-	rm -f $(OFILES)
+	rm -f $(OFILES) $(SERVER_OFILES)
 
 clean: clean_libs clean_
 
 fclean_: clean_
-	rm -f $(NAME)
+	rm -f $(NAME) $(SERVER)
 
 fclean: fclean_ clean
 	rm -f $(LIBS_FILES)
